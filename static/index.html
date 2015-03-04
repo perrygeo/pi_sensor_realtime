@@ -9,11 +9,15 @@
       var readings = new TimeSeries();
       
       function createTimeline() {
-        var chart = new SmoothieChart({interpolation:'bezier'});
+        var chart = new SmoothieChart({
+          interpolation:'bezier',
+          minValue:0.0,
+          maxValue:4000
+        });
         chart.addTimeSeries(readings, { 
-            strokeStyle: 'rgba(0, 255, 0, 0.5)',
-            fillStyle: 'rgba(0, 0, 255, 0.0)',
-            lineWidth: 2 });
+            strokeStyle: 'rgba(0, 255, 0, 0.6)',
+            fillStyle: 'rgba(0, 0, 255, 0.2)',
+            lineWidth: 3 });
         chart.streamTo(document.getElementById("chart"), 500);
       }
 
