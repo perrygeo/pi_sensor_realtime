@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Pi sensor real-time plots</title>
+    <script type="text/javascript" src="vendor/smoothie.js"></script>
+    <script type="text/javascript" src="vendor/reconnecting-websocket.min.js"></script>
+    <script type="text/javascript">
+
+      var readings = new TimeSeries();
+      
+      function createTimeline() {
+        var chart = new SmoothieChart({interpolation:'bezier'});
+        chart.addTimeSeries(readings, { 
+            strokeStyle: 'rgba(0, 255, 0, 0.5)',
+            fillStyle: 'rgba(0, 0, 255, 0.0)',
+            lineWidth: 2 });
+        chart.streamTo(document.getElementById("chart"), 500);
+      }
+
+      var ws = new ReconnectingWebSocket('ws://pi:8080/');
+      ws.onopen = function() {
+        document.body.style.backgroundColor = '#cfc';
+      };
+      ws.onclose = function() {
+        document.body.style.backgroundColor = null;
+      };
+      ws.onmessage = function(event) {
+        var data = event.data.split(",");
+        var timestamp = parseFloat(data[0]) * 1000;  // expects ms
+        var value = parseFloat(data[1]);
+        readings.append(timestamp, value);
+      };
+
+    </script>
+  </head>
+  <body onload="createTimeline()">
+    <h2> Photoresistor RC Timings from Raspberry Pi GPIO pins </h2>
+    <canvas id="chart" width="800" height="400"></canvas>
+  </body>
+</html>
